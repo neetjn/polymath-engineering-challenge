@@ -1,0 +1,51 @@
+{
+  "name": "polymath",
+  "version": "1.0.0",
+  "description": "SPA to fetch and display the entire eBay category tree using Riot.js.",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "node-sass": "^4.7.2",
+    "riot": "^3.8.1",
+    "riot-tag-loader": "^2.0.2",
+    "sass-loader": "^6.0.6",
+    "webpack": "^3.11.0",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "devDependencies": {
+    "animate.css": "^3.6.1",
+    "axios": "^0.17.1",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "node-sass": "^4.7.2",
+    "riot": "^3.8.1",
+    "riot-animore": "^1.0.0",
+    "riot-tag-loader": "^2.0.2",
+    "sass-loader": "^6.0.6",
+    "uikit": "^3.0.0-beta.40",
+    "webpack": "^3.11.0",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neetjn/polymath-engineering-challenge.git"
+  },
+  "keywords": [
+    "riot",
+    "npm",
+    "node",
+    "javascript",
+    "sass"
+  ],
+  "author": "John Nolette <john@neetgroup.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/neetjn/polymath-engineering-challenge/issues"
+  },
+  "homepage": "https://github.com/neetjn/polymath-engineering-challenge#readme"
+}

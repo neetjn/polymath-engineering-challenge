@@ -1,0 +1,21 @@
+[[source]]
+
+name = "pypi"
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+
+[dev-packages]
+
+pylint = "*"
+pytest-cov = "*"
+
+
+[packages]
+
+flask = "*"
+peewee = "*"
+flask-cors = "*"
+flask-responses = "*"
+"r2dto" = "*"
+flask-trace = "*"
