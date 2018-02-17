@@ -19,7 +19,11 @@ flask-cors = "*"
 flask-responses = "*"
 "r2dto" = "*"
 flask-trace = "*"
+requests = "*"
+xmltodict = "*"
+xmler = "*"
 
 
 [requires]
+
 python_version = "3.6"

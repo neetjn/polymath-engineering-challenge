@@ -163,3 +163,4 @@ venv/
 .vscode/
 test_*.png
 .pytest_cache
+polymath.db
