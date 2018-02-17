@@ -1,4 +1,6 @@
 import requests
+import time
+
 import xmltodict
 from xmler import dict2xml
 
@@ -26,7 +28,7 @@ def d2xml(body, encoding='utf-8', pretty=False):
     return f'<?xml version="1.0" encoding="UTF-8"?>{dict2xml(body)}'
 
 
-def get_categories():
+def get_categories_from_ebay():
     """
     Fetch all categories using eBay api.
     Note: This is slightly inefficient the payload is parsed into an ordered dict,
@@ -49,7 +51,33 @@ def get_categories():
         raise requests.exceptions.BaseHTTPError(f'Expected status code 200, found {response.status_code}')
 
     payload = xmltodict.parse(response.content)['GetCategoriesResponse']
-    return payload
+    updated = int(time.mktime(time.strptime(payload['UpdateTime'][:19], '%Y-%m-%dT%H:%M:%S')))
+    return EBayCategoriesDto(
+        categories=[EBayCategoryDto(
+            category_id=category['CategoryID'],
+            category_parent_id=category['CategoryParentID'],
+            category_level=category['CategoryLevel'],
+            category_name=category['CategoryName'],
+            best_offer_enabled=category.get('BestOfferEnabled', False),
+            expired=category.get('Expired', False)
+        ) for category in payload['CategoryArray']['Category']],
+        category_count=payload['CategoryCount'],
+        category_version=payload['CategoryVersion'],
+        update_time=updated)
+
+
+def get_category(category_id):
+    """
+    Fetch category from database.
+    """
+    pass
+
+
+def get_categories():
+    """
+    Fetch categories from database.
+    """
+    pass
 
 
 def render_category(category_id):
