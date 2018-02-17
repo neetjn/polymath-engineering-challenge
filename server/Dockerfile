@@ -1,4 +1,4 @@
-FROM python:2.7.12
+FROM python:3.6.0
 LABEL authors="John Nolette <john@neetgroup.net>"
 
 ENV LC_ALL=C.UTF-8 \
