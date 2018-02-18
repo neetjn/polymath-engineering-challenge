@@ -2,6 +2,9 @@ import os
 
 DB_NAME = os.environ.get('DB_NAME', 'polymath.db')
 
+API_HOST = os.environ.get('API_HOST', '0.0.0.0')
+API_PORT = os.environ.get('API_PORT', 3300)
+
 EBAY_API_GATEWAY = os.environ.get('EBAY_API_GATEWAY', 'https://api.sandbox.ebay.com/ws/api.dll')
 EBAY_API_APP_NAME = os.environ.get('EBAY_API_APP_NAME', 'EchoBay62-5538-466c-b43b-662768d6841')
 EBAY_API_CERT_NAME = os.environ.get('EBAY_API_CERT_NAME', '00dd08ab-2082-4e3c-9518-5f4298f296db')

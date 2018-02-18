@@ -2,7 +2,9 @@ import requests
 import time
 
 import xmltodict
+from flask_trace import trace
 from xmler import dict2xml
+
 
 from polymath.db import Category
 from polymath.mediatypes import EBayCategoryDto, EBayCategoriesDto, CategoryDto
@@ -67,6 +69,7 @@ def get_categories_from_ebay():
         update_time=updated)
 
 
+@trace
 def get_category(category_id):
     """
     Fetch category from database.
@@ -74,6 +77,7 @@ def get_category(category_id):
     category = Category.get_by_id(category_id)
 
 
+@trace
 def get_categories():
     """
     Fetch categories from database.
