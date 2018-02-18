@@ -31,5 +31,9 @@ def get_categories_resource():
 @api.route('/api/v1/category/<category_id>', methods=['GET'])
 def get_category_resource(category_id):
     """Endpoint for fetching category by id, including children."""
-    category = next((c for c in cached_category_dtos if c.category_id == category_id), None) or get_category(category_id)
+    category = next((c for c in cached_category_dtos if c.category_id == category_id), None)
+    if not category:
+        category = get_category(category_id)
+        category.links = [LinkDto(href=url_for('get_category_resource', category_id=category_id), rel='self')]
+        cached_categories_dto.append(category)
     return json_response(to_json(CategoryDtoSerializer, category))

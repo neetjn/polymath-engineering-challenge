@@ -84,7 +84,7 @@ def get_categories(depth=1):
 
     :param depth: Category level constraint.
     """
-    return Category.select().where()
+    return Category.select().where(Category.category_level == depth)
 
 
 def category_to_dto(category):
