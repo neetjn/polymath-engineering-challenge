@@ -3,11 +3,12 @@ import time
 
 import xmltodict
 from flask_trace import trace
+from peewee import fn
 from xmler import dict2xml
 
 
 from polymath.db import Category
-from polymath.mediatypes import EBayCategoryDto, EBayCategoriesDto, CategoryDto
+from polymath.mediatypes import EBayCategoryDto, EBayCategoriesDto, CategoryDto, CategoryCollectionDto
 from polymath.constants import EBAY_API_GATEWAY, EBAY_API_APP_NAME, EBAY_API_CERT_NAME, EBAY_API_COMPATIBILITY_LEVEL, \
     EBAY_API_SITE_ID, EBAY_API_DEV_NAME, EBAY_API_AUTH_TOKEN
 
@@ -66,25 +67,47 @@ def get_categories_from_ebay():
         ) for category in payload['CategoryArray']['Category']],
         category_count=payload['CategoryCount'],
         category_version=payload['CategoryVersion'],
-        update_time=updated)
+        update_time=updated
+    )
 
 
-@trace
+def get_summary():
+    """
+    Fetch top level categories from the database.
+    """
+    depth = Category.select(fn.Min(Category.category_level)).scalar()
+    return CategoryCollectionDto(categories=[category_to_dto(category) \
+        for category in Category.select().where(Category.category_level == depth)])
+
+
+def get_categories():
+    """
+    Fetch categories from database.
+    Note: This method will construct an entire category tree.
+    """
+    category_collection = CategoryCollectionDto()
+    depth = Category.select(fn.Max(Category.category_level)).scalar()
+    categories = [[category_to_dto(category) for category in Category.select()\
+        .where(Category.category_level == level + 1)] for level in range(depth)]
+    categories.reverse()
+    for i, level in enumerate(categories):
+        if i != depth - 1:
+            for category in level:
+                # normalizing data outside of ORM for dto
+                category.category_parent_id = category.category_parent_id.category_id
+                parent = next(parent for parent in categories[i + 1] \
+                    if parent.category_id == category.category_parent_id)
+                parent.children.append(category)
+
+    category_collection.categories = categories[-1]
+    return category_collection
+
+
 def get_category(category_id):
     """
     Fetch category from database.
     """
     category = Category.get_by_id(category_id)
-
-
-@trace
-def get_categories(depth=1):
-    """
-    Fetch categories from database.
-
-    :param depth: Category level constraint.
-    """
-    return Category.select().where(Category.category_level == depth)
 
 
 def category_to_dto(category):

@@ -64,3 +64,17 @@ class BaseCategorySerializer(Serializer):
 
 class CategoryDtoSerializer(BaseCategorySerializer):
     children = fields.ListField(fields.ObjectField(BaseCategorySerializer))
+
+
+class CategoryCollectionDto(object):
+    def __init__(self, categories=None, links=None):
+        self.categories = categories or []
+        self.links = links or []
+
+
+class CategoryCollectionDtoSerializer(Serializer):
+    categories = fields.ListField(fields.ObjectField(CategoryDtoSerializer))
+    links = fields.ListField(fields.ObjectField(LinkDtoSerializer))
+
+    class Meta(object):
+        model = CategoryCollectionDto

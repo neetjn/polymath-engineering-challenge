@@ -3,8 +3,8 @@ from flask import Flask, Response, redirect, request, url_for
 from flask_cors import CORS
 from flask_responses import json_response
 
-from polymath.core import get_category, get_categories, category_to_dto
-from polymath.mediatypes import CategoryDtoSerializer, LinkDto
+from polymath.core import get_summary, get_categories, get_category
+from polymath.mediatypes import CategoryDtoSerializer, CategoryCollectionDtoSerializer, LinkDto
 from polymath.utils import to_json
 
 
@@ -16,16 +16,42 @@ CORS(api, resources={r'/api/*': {'origins': '*'}})
 # assuming we don't provide an interface to modify, add, or remove resources
 # we only actually need to reference the entire tree once
 
-cached_categories_dto = None
+cached_category_summary = None
+cached_category_collection = None
 cached_category_dtos = []
+
+@api.route('/api/v1/summary/', methods=['GET'])
+def get_summary_resource():
+    """Endpoint for fetching topmost categories."""
+    global cached_category_summary
+
+    category_summary = cached_category_summary
+    if not category_summary:
+        category_summary = get_summary()
+        category_summary.links = [
+            LinkDto(href=url_for('get_categories_resource'), rel='categories'),
+            LinkDto(href=url_for('get_summary_resource'), rel='summary')
+        ]
+        for category in category_summary.categories:
+            category.links = [LinkDto(href=url_for('get_category_resource', category_id=category.category_id))]
+        cached_category_summary = category_summary
+
+    return json_response(to_json(CategoryCollectionDtoSerializer, category_summary))
 
 
 @api.route('/api/v1/categories/', methods=['GET'])
 def get_categories_resource():
     """Endpoint for fetching categories from the top level down."""
-    cached_categories = cached_categories or get_categories()
-    categories = cached_categories
-    return json_response(json.loads([to_json(CategoryDtoSerializer, category) for category in categories])
+    global cached_category_collection
+
+    category_collection = cached_category_collection or get_categories()
+    if not cached_category_collection:
+        category_collection.links = [
+            LinkDto(href=url_for('get_categories_resource'), rel='categories'),
+            LinkDto(href=url_for('get_summary'), rel='summary')
+        ]
+        cached_category_collection = category_collection
+    return json_response(to_json(CategoryCollectionDtoSerializer, category_collection))
 
 
 @api.route('/api/v1/category/<category_id>', methods=['GET'])
