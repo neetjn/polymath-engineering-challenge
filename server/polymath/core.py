@@ -78,11 +78,11 @@ def get_category(category_id):
 
 
 @trace
-def get_categories(level=None):
+def get_categories(depth=1):
     """
     Fetch categories from database.
 
-    :param level: Category level to filter by.
+    :param depth: Category level constraint.
     """
     return Category.select().where()
 

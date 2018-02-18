@@ -6,7 +6,11 @@ from playhouse.sqlite_ext import SqliteExtDatabase
 from polymath.constants import DB_NAME
 
 
-client = SqliteExtDatabase(DB_NAME)
+client = SqliteExtDatabase(DB_NAME, pragmas=(
+    ('journal_mode', 'WAL'),
+    ('cache_size', 10000),
+    ('mmap_size', 1024 * 1024 * 32),
+))
 client.connect()
 
 
