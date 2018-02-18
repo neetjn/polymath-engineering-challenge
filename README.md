@@ -23,13 +23,20 @@ Cleanup and bootstrap our database.
 ./server python -m polymath --rebuild
 ```
 
-### --render <category_id> <to_json>
+### --render <category_id>
 
 Render an HTML page based on the category provided.
 
 ```bash
 ./server python -m polymath --render 100100
-./server python -m polymath --render 100100 1
+```
+
+### --json <category_id>
+
+Dump json payload for provided category.
+
+```bash
+./server python -m polymath --json 100100
 ```
 
 ## Testing
@@ -64,7 +71,7 @@ If you prefer docker compose,
 
 ```bash
 docker-compose build
-API_PORT=3000 docker-compose up
+docker-compose up
 ```
 
 ---
