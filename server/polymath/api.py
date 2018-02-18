@@ -13,4 +13,13 @@ CORS(api, resources={r'/api/*': {'origins': '*'}})
 
 @app.route('/api/v1/categories/', methods=['GET'])
 def get_categories_resource():
+    """
+    """
+    pass
+
+
+@app.route('/api/v1/category/<category_id>', methods=['GET'])
+def get_categories_resource(category_id):
+    """
+    """
     pass
