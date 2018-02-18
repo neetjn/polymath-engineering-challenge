@@ -41,12 +41,13 @@ class CategoryDto(object):
         self.category_level = kwargs.get('category_level', 0)
         self.category_name = kwargs.get('category_name', 0)
         self.category_updated = kwargs.get('category_updated', 0)
+        self.children = kwargs.get('children', [])
         self.best_offer_enabled = kwargs.get('best_offer_enabled', False)
         self.expired = kwargs.get('expired', False)
         self.last_updated = kwargs.get('last_updated', 0)
 
 
-class CategoryDtoSerializer(Serializer):
+class BaseCategorySerializer(Serializer):
     links = fields.ListField(fields.ObjectField(LinkDtoSerializer))
     category_id = fields.IntegerField(name='categoryId')
     category_parent_id = fields.IntegerField(name='categoryParentId')
@@ -57,19 +58,9 @@ class CategoryDtoSerializer(Serializer):
     expired = fields.BooleanField()
     last_updated = fields.IntegerField(name='lastUpdated')
 
-
     class Meta(object):
         model = CategoryDto
 
 
-class CategoryTreeDto(object):
-    def __init__(self, categories=None):
-        self.categories = categories or []
-
-
-class CategoryTreeDtoSerializer(Serializer):
-
-    categories = fields.ObjectField(CategoryDtoSerializer)
-
-    class Meta(object):
-        model = CategoryTreeDto
+class CategoryDtoSerializer(BaseCategorySerializer):
+    children = fields.ListField(fields.ObjectField(BaseCategorySerializer))

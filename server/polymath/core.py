@@ -78,9 +78,11 @@ def get_category(category_id):
 
 
 @trace
-def get_categories():
+def get_categories(level=None):
     """
     Fetch categories from database.
+
+    :param level: Category level to filter by.
     """
     return Category.select().where()
 
@@ -124,12 +126,6 @@ def dto_to_category(category_dto):
 
 
 def render_category(category_id):
-    """
-    """
-    pass
-
-
-def render_categories(categories=None):
     """
     """
     pass
