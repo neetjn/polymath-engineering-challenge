@@ -52,7 +52,7 @@ class CategoryDtoSerializer(Serializer):
     category_id = fields.IntegerField(name='categoryId')
     category_parent_id = fields.IntegerField(name='categoryParentId')
     category_level = fields.IntegerField(name='categoryLevel')
-    category_name = fields.IntegerField(name='categoryName')
+    category_name = fields.StringField(name='categoryName')
     category_updated = fields.IntegerField(name='categoryUpdated')
     best_offer_enabled = fields.BooleanField(name='bestOffersEnabled')
     expired = fields.BooleanField()

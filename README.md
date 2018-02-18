@@ -23,12 +23,13 @@ Cleanup and bootstrap our database.
 ./server python -m polymath --rebuild
 ```
 
-### --render <category_id>
+### --render <category_id> <to_json>
 
 Render an HTML page based on the category provided.
 
 ```bash
 ./server python -m polymath --render 100100
+./server python -m polymath --render 100100 1
 ```
 
 ## Testing

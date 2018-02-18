@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask_responses import json_response
 
 from polymath.core import get_summary, get_categories, get_category
+from polymath.errors import ExternalResourcesNotFound, ExternalResourcesNotFound
 from polymath.mediatypes import CategoryDtoSerializer, CategoryCollectionDtoSerializer, LinkDto
 from polymath.utils import to_json
 
@@ -12,9 +13,10 @@ api = Flask(__name__)
 CORS(api, resources={r'/api/*': {'origins': '*'}})
 
 
-# would ideally cache with redis, using sqlite pragma
+# would ideally cache with redis or mem_cache, using sqlite pragma
 # assuming we don't provide an interface to modify, add, or remove resources
 # we only actually need to reference the entire tree once
+# if we decide to add any modifiers, we can simply invalidate the cache
 
 cached_category_collection = None
 cached_category_dtos = []
@@ -51,9 +53,11 @@ def get_categories_resource():
 @api.route('/api/v1/category/<category_id>', methods=['GET'])
 def get_category_resource(category_id):
     """Endpoint for fetching category by id, including children."""
+    global cached_category_dtos
+
     category = next((c for c in cached_category_dtos if c.category_id == category_id), None)
     if not category:
         category = get_category(category_id)
-        category.links = [LinkDto(href=url_for('get_category_resource', category_id=category_id), rel='self')]
-        cached_categories_dto.append(category)
+        category.links = [LinkDto(href=url_for('get_category_resource', category_id=category_id), rel='category')]
+        cached_category_dtos.append(category)
     return json_response(to_json(CategoryDtoSerializer, category))

@@ -29,10 +29,11 @@ if __name__ == '__main__':
     a = argparse.ArgumentParser()
     a.add_argument('--rebuild', action='store_true', help='Rebuild categories.')
     a.add_argument('--render', help='Render category tree.')
+    a.add_argument('--app', action='store_true', help='Start rest api.')
     args, remaining_args = a.parse_known_args()
     if args.rebuild:
         rebuild()
     if args.render:
         render(args.render)
-    if not args.rebuild and not args.render:
+    if args.app or not args.rebuild and not args.render:
         api.run(host=API_HOST, port=int(API_PORT), threaded=True, processes=1)

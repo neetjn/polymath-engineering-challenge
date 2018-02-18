@@ -85,29 +85,52 @@ def get_categories():
     Fetch categories from database.
     Note: This method will construct an entire category tree.
     """
-    category_collection = CategoryCollectionDto()
     depth = Category.select(fn.Max(Category.category_level)).scalar()
     categories = [[category_to_dto(category) for category in Category.select()\
         .where(Category.category_level == level + 1)] for level in range(depth)]
     categories.reverse()
+    # tree algo, adding children to parent from bottom most level up
     for i, level in enumerate(categories):
+        # top level categories have no parent categories
         if i != depth - 1:
             for category in level:
                 parent = next(parent for parent in categories[i + 1] \
                     if parent.category_id == category.category_parent_id)
                 parent.children.append(category)
 
-    for category in category_collection.categories:
-        category.category_parent_id = 0
-    category_collection.categories = categories[-1]
-    return category_collection
+    # return the last category which has all of our changes from our tree algo
+    return CategoryCollectionDto(categories=categories[-1])
 
 
 def get_category(category_id):
     """
     Fetch category from database.
+
+    :param category_id: Identifier for category to target.
+    :type category_id: str
     """
-    category = Category.get_by_id(category_id)
+    category = category_to_dto(Category.get_by_id(category_id))
+    depth = Category.select(fn.Max(Category.category_level)).scalar()
+    levels = [[category_to_dto(category) for category in Category.select()\
+        .where(Category.category_level == level + 1)] for level in range(category.category_level, depth)]
+    levels.reverse()
+    # tree algo, adding children to parent from bottom most level up
+    for i, level in enumerate(levels):
+        # top level categories have no parent categories
+        if level[0].category_level > category.category_level + 1:
+            for c in level:
+                parent = next(parent for parent in levels[i + 1] \
+                    if parent.category_id == c.category_parent_id)
+                parent.children.append(c)
+        else:
+            break
+
+    if levels:
+        # include processed children nodes
+        levels[-1] = [l for l in levels[-1] if l.category_parent_id == category.category_id]
+        category.children = levels[-1]
+    # return the last category which has all of our changes from our tree algo
+    return category
 
 
 def category_to_dto(category):
@@ -123,6 +146,7 @@ def category_to_dto(category):
         category_parent_id=category.category_parent_id.category_id \
             if isinstance(category.category_parent_id, Category) else 0,
         category_level=category.category_level,
+        category_name=category.category_name,
         category_updated=category.category_updated,
         best_offer_enabled=category.best_offer_enabled,
         expired=category.expired,
@@ -153,7 +177,3 @@ def render_category(category):
     """
     """
     pass
-
-
-# print(get_categories())
-# print(get_category(14111))
