@@ -1,0 +1,12 @@
+version: '2.1'
+services:
+  resource:
+    build: ./server
+    links:
+      - db
+    ports:
+      - "3300:3300"
+  web:
+    build: ./app
+    ports:
+      - "3000:3000"
