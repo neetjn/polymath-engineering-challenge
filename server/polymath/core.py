@@ -125,7 +125,7 @@ def dto_to_category(category_dto):
     )
 
 
-def render_category(category_id):
+def render_category(category):
     """
     """
     pass

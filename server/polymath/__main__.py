@@ -16,13 +16,13 @@ def rebuild():
 
 def render(category_id):
     """Render category tree from category id"""
-    tpl = open('Output.txt', 'w')
     try:
         category = get_category(category_id)
     except Category.DoesNotExist:
         print(f'No category with id: {category_id}')
     else:
-        tpl.write(render_category())
+        tpl = open(f'{category_id}.html', 'w')
+        tpl.write(render_category(category))
 
 
 if __name__ == '__main__':
