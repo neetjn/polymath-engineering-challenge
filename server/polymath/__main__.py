@@ -1,7 +1,8 @@
 import argparse
+import os
 
-from polymath.core import get_categories_from_ebay
-from polymath.db import bootstrap, drop_database
+from polymath.core import get_categories_from_ebay, get_category, render_category
+from polymath.db import bootstrap, drop_database, Category
 
 def rebuild():
     """Bootstrap application"""
@@ -10,8 +11,15 @@ def rebuild():
     bootstrap(categories)
 
 
-def render(category):
-    pass
+def render(category_id):
+    """Render category tree from category id"""
+    tpl = open('Output.txt', 'w')
+    try:
+        category = get_category(category_id)
+    except Category.DoesNotExist:
+        print(f'No category with id: {category_id}')
+    else:
+        tpl.write(render_category())
 
 
 if __name__ == '__main__':

@@ -4,7 +4,8 @@ import time
 import xmltodict
 from xmler import dict2xml
 
-from polymath.mediatypes import EBayCategoryDto, EBayCategoriesDto
+from polymath.db import Category
+from polymath.mediatypes import EBayCategoryDto, EBayCategoriesDto, CategoryDto
 from polymath.constants import EBAY_API_GATEWAY, EBAY_API_APP_NAME, EBAY_API_CERT_NAME, EBAY_API_COMPATIBILITY_LEVEL, \
     EBAY_API_SITE_ID, EBAY_API_DEV_NAME, EBAY_API_AUTH_TOKEN
 
@@ -70,14 +71,52 @@ def get_category(category_id):
     """
     Fetch category from database.
     """
-    pass
+    category = Category.get_by_id(category_id)
 
 
 def get_categories():
     """
     Fetch categories from database.
     """
-    pass
+    return Category.select().where()
+
+
+def category_to_dto(category):
+    """
+    Convert database model into data transfer object.
+
+    :param category: Category to convert.
+    :type category: Category
+    :returns: CategoryDto
+    """
+    return CategoryDto(
+        category_id=category.category_id,
+        category_parent_id=category.category_parent_id,
+        category_level=category.category_level,
+        category_updated=category.category_updated,
+        best_offer_enabled=category.best_offer_enabled,
+        expired=category.expired,
+        last_updated=category.last_updated
+    )
+
+
+def dto_to_category(category_dto):
+    """
+    Convert data transfer object into database model.
+
+    :param category_dto: Category data transfer object to convert.
+    :type category_dto: CategoryDto
+    :returns: Category
+    """
+    return Category(
+        category_id=category.category_id,
+        category_parent_id=category.category_parent_id,
+        category_level=category.category_level,
+        category_updated=category.category_updated,
+        best_offer_enabled=category.best_offer_enabled,
+        expired=category.expired,
+        last_updated=category.last_updated
+    )
 
 
 def render_category(category_id):
