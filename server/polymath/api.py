@@ -3,11 +3,14 @@ from flask import Flask, Response, redirect, request, url_for
 from flask_cors import CORS
 from flask_responses import json_response
 
-from grio.core import get_people, get_person, create_person, delete_person, update_person
-from grio.mediatypes import PersonDtoSerializer, PeopleDtoSerializer, LinkDto
+from polymath.core import get_category, get_categories
+from polymath.mediatypes import CategoryDtoSerializer, CategoriesDtoSerializer, LinkDto
 
 
-app = Flask(__name__)
-CORS(app, resources={r'/api/*': {'origins': '*'}})
+api = Flask(__name__)
+CORS(api, resources={r'/api/*': {'origins': '*'}})
 
-@trace
+
+@app.route('/api/v1/categories/', methods=['GET'])
+def get_categories_resource():
+    pass
