@@ -102,22 +102,26 @@ def get_categories():
     return CategoryCollectionDto(categories=categories[-1])
 
 
-def get_category(category_id):
+def get_category(category_id, tree=False):
     """
     Fetch category from database.
 
     :param category_id: Identifier for category to target.
     :type category_id: str
+    :param tree: Return entire category tree.
+    :type tree: bool
     """
     category = category_to_dto(Category.get_by_id(category_id))
+    category_level = category.category_level
     depth = Category.select(fn.Max(Category.category_level)).scalar()
     levels = [[category_to_dto(category) for category in Category.select()\
-        .where(Category.category_level == level + 1)] for level in range(category.category_level, depth)]
+        .where(Category.category_level == level + 1)] \
+            for level in range(category_level, depth if tree else category_level + 1 )]
     levels.reverse()
     # tree algo, adding children to parent from bottom most level up
     for i, level in enumerate(levels):
         # top level categories have no parent categories
-        if level[0].category_level > category.category_level + 1:
+        if level[0].category_level > category_level + 1:
             for c in level:
                 parent = next(parent for parent in levels[i + 1] \
                     if parent.category_id == c.category_parent_id)

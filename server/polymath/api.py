@@ -20,6 +20,7 @@ CORS(api, resources={r'/api/*': {'origins': '*'}})
 
 cached_category_collection = None
 cached_category_dtos = []
+cached_category_trees = []
 
 @api.route('/api/v1/summary/', methods=['GET'])
 def get_summary_resource():
@@ -52,12 +53,31 @@ def get_categories_resource():
 
 @api.route('/api/v1/category/<category_id>', methods=['GET'])
 def get_category_resource(category_id):
-    """Endpoint for fetching category by id, including children."""
+    """Endpoint for fetching top level category by id."""
     global cached_category_dtos
 
     category = next((c for c in cached_category_dtos if c.category_id == category_id), None)
     if not category:
         category = get_category(category_id)
-        category.links = [LinkDto(href=url_for('get_category_resource', category_id=category_id), rel='category')]
+        category.links = [
+            LinkDto(href=url_for('get_category_resource', category_id=category_id), rel='category'),
+            LinkDto(href=url_for('get_category_tree_resource', category_id=category_id), rel='category-tree')
+        ]
         cached_category_dtos.append(category)
+    return json_response(to_json(CategoryDtoSerializer, category))
+
+
+@api.route('/api/v1/category/<category_id>/tree', methods=['GET'])
+def get_category_tree_resource(category_id):
+    """Endpoint for fetching category by id, including all children."""
+    global cached_category_trees
+
+    category = next((c for c in cached_category_trees if c.category_id == category_id), None)
+    if not category:
+        category = get_category(category_id, tree=True)
+        category.links = [
+            LinkDto(href=url_for('get_category_resource', category_id=category_id), rel='category'),
+            LinkDto(href=url_for('get_category_tree_resource', category_id=category_id), rel='category-tree')
+        ]
+        cached_category_trees.append(category)
     return json_response(to_json(CategoryDtoSerializer, category))
