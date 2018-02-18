@@ -93,12 +93,12 @@ def get_categories():
     for i, level in enumerate(categories):
         if i != depth - 1:
             for category in level:
-                # normalizing data outside of ORM for dto
-                category.category_parent_id = category.category_parent_id.category_id
                 parent = next(parent for parent in categories[i + 1] \
                     if parent.category_id == category.category_parent_id)
                 parent.children.append(category)
 
+    for category in category_collection.categories:
+        category.category_parent_id = 0
     category_collection.categories = categories[-1]
     return category_collection
 
@@ -120,7 +120,8 @@ def category_to_dto(category):
     """
     return CategoryDto(
         category_id=category.category_id,
-        category_parent_id=category.category_parent_id,
+        category_parent_id=category.category_parent_id.category_id \
+            if isinstance(category.category_parent_id, Category) else 0,
         category_level=category.category_level,
         category_updated=category.category_updated,
         best_offer_enabled=category.best_offer_enabled,

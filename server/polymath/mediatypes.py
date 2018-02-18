@@ -63,6 +63,15 @@ class BaseCategorySerializer(Serializer):
 
 
 class CategoryDtoSerializer(BaseCategorySerializer):
+    links = fields.ListField(fields.ObjectField(LinkDtoSerializer))
+    category_id = fields.IntegerField(name='categoryId')
+    category_parent_id = fields.IntegerField(name='categoryParentId')
+    category_level = fields.IntegerField(name='categoryLevel')
+    category_name = fields.IntegerField(name='categoryName')
+    category_updated = fields.IntegerField(name='categoryUpdated')
+    best_offer_enabled = fields.BooleanField(name='bestOffersEnabled')
+    expired = fields.BooleanField()
+    last_updated = fields.IntegerField(name='lastUpdated')
     children = fields.ListField(fields.ObjectField(BaseCategorySerializer))
 
 

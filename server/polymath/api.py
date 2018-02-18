@@ -16,26 +16,20 @@ CORS(api, resources={r'/api/*': {'origins': '*'}})
 # assuming we don't provide an interface to modify, add, or remove resources
 # we only actually need to reference the entire tree once
 
-cached_category_summary = None
 cached_category_collection = None
 cached_category_dtos = []
 
 @api.route('/api/v1/summary/', methods=['GET'])
 def get_summary_resource():
     """Endpoint for fetching topmost categories."""
-    global cached_category_summary
-
-    category_summary = cached_category_summary
-    if not category_summary:
-        category_summary = get_summary()
-        category_summary.links = [
-            LinkDto(href=url_for('get_categories_resource'), rel='categories'),
-            LinkDto(href=url_for('get_summary_resource'), rel='summary')
-        ]
-        for category in category_summary.categories:
-            category.links = [LinkDto(href=url_for('get_category_resource', category_id=category.category_id))]
-        cached_category_summary = category_summary
-
+    category_summary = get_summary()
+    category_summary.links = [
+        LinkDto(href=url_for('get_categories_resource'), rel='categories'),
+        LinkDto(href=url_for('get_summary_resource'), rel='summary')
+    ]
+    for category in category_summary.categories:
+        category.links = [LinkDto(href=url_for('get_category_resource', category_id=category.category_id))]
+    cached_category_summary = category_summary
     return json_response(to_json(CategoryCollectionDtoSerializer, category_summary))
 
 
@@ -48,7 +42,7 @@ def get_categories_resource():
     if not cached_category_collection:
         category_collection.links = [
             LinkDto(href=url_for('get_categories_resource'), rel='categories'),
-            LinkDto(href=url_for('get_summary'), rel='summary')
+            LinkDto(href=url_for('get_summary_resource'), rel='summary')
         ]
         cached_category_collection = category_collection
     return json_response(to_json(CategoryCollectionDtoSerializer, category_collection))
