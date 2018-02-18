@@ -7,12 +7,13 @@ class PolymathException(Exception):
         self.message = msg or self.message
 
     def to_dict(self):
+        # pylint: disable=no-member
         rv = dict(self.payload or ())
         rv['message'] = self.message
         return rv
 
 
-class ExternalResourcesNotFound(PolymathException):
+class ExternalResourceNotFound(PolymathException):
     status_code = 404
     message = 'External resources was not found'
 

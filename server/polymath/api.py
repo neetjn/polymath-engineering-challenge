@@ -32,7 +32,6 @@ def get_summary_resource():
     ]
     for category in category_summary.categories:
         category.links = [LinkDto(href=url_for('get_category_resource', category_id=category.category_id))]
-    cached_category_summary = category_summary
     return json_response(to_json(CategoryCollectionDtoSerializer, category_summary))
 
 

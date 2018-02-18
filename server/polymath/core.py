@@ -75,9 +75,11 @@ def get_summary():
     """
     Fetch top level categories from the database.
     """
+    # pylint: disable=no-value-for-parameter
     depth = Category.select(fn.Min(Category.category_level)).scalar()
     return CategoryCollectionDto(categories=[category_to_dto(category) \
-        for category in Category.select().where(Category.category_level == depth)])
+        for category in Category.select().where(Category.category_level == depth) \
+            if not category.expired])
 
 
 def get_categories():
@@ -85,9 +87,11 @@ def get_categories():
     Fetch categories from database.
     Note: This method will construct an entire category tree.
     """
+    # pylint: disable=no-value-for-parameter
     depth = Category.select(fn.Max(Category.category_level)).scalar()
     categories = [[category_to_dto(category) for category in Category.select()\
-        .where(Category.category_level == level + 1)] for level in range(depth)]
+        .where(Category.category_level == level + 1) if not category.expired] \
+            for level in range(depth)]
     categories.reverse()
     # tree algo, adding children to parent from bottom most level up
     for i, level in enumerate(categories):
@@ -111,11 +115,12 @@ def get_category(category_id, tree=False):
     :param tree: Return entire category tree.
     :type tree: bool
     """
+    # pylint: disable=no-value-for-parameter
     category = category_to_dto(Category.get_by_id(category_id))
     category_level = category.category_level
     depth = Category.select(fn.Max(Category.category_level)).scalar()
     levels = [[category_to_dto(category) for category in Category.select()\
-        .where(Category.category_level == level + 1)] \
+        .where(Category.category_level == level + 1) if not category.expired] \
             for level in range(category_level, depth if tree else category_level + 1 )]
     levels.reverse()
     # tree algo, adding children to parent from bottom most level up
@@ -167,13 +172,14 @@ def dto_to_category(category_dto):
     :returns: Category
     """
     return Category(
-        category_id=category.category_id,
-        category_parent_id=category.category_parent_id,
-        category_level=category.category_level,
-        category_updated=category.category_updated,
-        best_offer_enabled=category.best_offer_enabled,
-        expired=category.expired,
-        last_updated=category.last_updated
+        category_id=category_dto.category_id,
+        category_parent_id=category_dto.category_parent_id,
+        category_level=category_dto.category_level,
+        category_name=category_dto.category_name,
+        category_updated=category_dto.category_updated,
+        best_offer_enabled=category_dto.best_offer_enabled,
+        expired=category_dto.expired,
+        last_updated=category_dto.last_updated
     )
 
 
