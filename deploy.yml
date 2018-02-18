@@ -1,0 +1,29 @@
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+  - name: Build rest api
+    docker_image:
+      path: ./server
+      name: polymatch_service_rest
+      tag: 0.0.1
+  - name: Start rest api
+    docker_container:
+      name: polymatch_service_rest_1
+      image: polymatch_service_rest:0.0.1
+      state: started
+      restart_policy: unless-stopped
+      published_ports:
+        - "3300:3300"
+  - name: Build app tier
+    docker_image:
+      path: ./app
+      name: polymatch_service_web
+      tag: 0.0.1
+  - name: Start app tier
+    docker_container:
+      name: polymatch_service_web_1
+      image: polymatch_service_web:0.0.1
+      state: started
+      restart_policy: unless-stopped
+      published_ports:
+        - "3000:3000"
