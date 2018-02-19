@@ -1,0 +1,104 @@
+<!DOCTYPE HTML5>
+<html>
+  <head>
+    <title>Categories - {{ category.category_name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulmaswatch/0.6.1/lumen/bulmaswatch.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.8.1/riot+compiler.min.js"></script>
+  </head>
+  <body>
+    <app />
+
+    <script type="riot/tag">
+      <app>
+        <section class="hero is-large">
+          <div class="hero-head">
+            <nav class="navbar">
+              <div class="container">
+                <div class="navbar-brand">
+                  <a class="navbar-item">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EBay_logo.svg/300px-EBay_logo.svg.png" alt="Logo" />
+                  </a>
+                </div>
+                <div id="navbarMenuHeroB" class="navbar-menu">
+                  <div class="navbar-end">
+                    <a href="https://github.com/neet_jn" class="navbar-item">
+                      Github&nbsp;<i class="fa fa-github"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/john-nolette-69ba72132/" class="navbar-item">
+                      LinkedIn&nbsp;<i class="fa fa-linkedin"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </nav>
+          </div>
+
+          <div class="hero-body">
+            <div class="container has-text-centered">
+              <div class="columns is-multiline">
+                <div class="column is-4 animated fadeIn" each={ child in parent_category.children }>
+                  <category category_parent={ parent_category }
+                            category_id={ child.categoryId }
+                            onclick={ updateParent }/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <style>
+          .hero-body {
+            margin-top: -12rem;
+          }
+          .hero-body .title {
+            margin-bottom: 3em;
+          }
+        </style>
+
+        this.parent_category = this.$category
+
+        updateParent(e) {
+
+        }
+      </app>
+    </script>
+
+    <script type="riot/tag">
+      <category>
+        <div class="card">
+          <div class="card-content">
+            <div class="media">
+              <div class="media-left">
+                <figure class="image is-48x48">
+                  <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+                </figure>
+              </div>
+              <div class="media-content">
+                <p class="title is-4">{ category.categoryName }</p>
+                <p class="subtitle is-6">@johnsmith</p>
+              </div>
+            </div>
+
+            <div class="content">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Phasellus nec iaculis mauris. <a>@bulmaio</a>.
+              <a href="#">#css</a> <a href="#">#responsive</a>
+              <br>
+              <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+            </div>
+          </div>
+        </div>
+
+        console.log(this.opts)
+        this.category = this.opts.category_parent.children.find(c => c.categoryId == this.opts.categoryId)
+      </category>
+    </script>
+
+    <script>
+      riot.mixin({ $category: {{ data }} })
+      riot.mount('app')
+    </script>
+  </body>
+</html>

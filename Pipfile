@@ -22,6 +22,7 @@ flask-trace = "*"
 requests = "*"
 xmltodict = "*"
 xmler = "*"
+"jinja2" = "*"
 
 
 [requires]

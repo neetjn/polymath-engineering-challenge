@@ -1,6 +1,7 @@
 import requests
 import time
 
+import os
 import xmltodict
 from flask_trace import trace
 from peewee import fn
@@ -181,9 +182,3 @@ def dto_to_category(category_dto):
         expired=category_dto.expired,
         last_updated=category_dto.last_updated
     )
-
-
-def render_category(category):
-    """
-    """
-    pass

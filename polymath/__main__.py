@@ -2,9 +2,11 @@ import argparse
 import json
 import os
 
+import jinja2
+
 from polymath.api import api
 from polymath.constants import API_HOST, API_PORT
-from polymath.core import get_categories_from_ebay, get_category, render_category
+from polymath.core import get_categories_from_ebay, get_category
 from polymath.db import bootstrap, drop_database, Category
 from polymath.mediatypes import CategoryDtoSerializer
 from polymath.utils import to_json
@@ -16,16 +18,26 @@ def rebuild():
     categories = get_categories_from_ebay()
     bootstrap(categories)
 
-
 def render(category_id):
-    """Render category tree from category id"""
+    """
+    Renders an interactive view for the desired category using Jinja.
+
+    :param category_id: Identifier for target category.
+    :type category_dto: str
+    """
     try:
-        category = get_category(category_id)
+        category = get_category(category_id, tree=False)
     except Category.DoesNotExist:
         print(f'No category with id: {category_id}')
     else:
-        tpl = open(f'{category_id}.html', 'w')
-        tpl.write(render_category(category))
+        fs = jinja2.FileSystemLoader(os.path.dirname(os.path.abspath(__file__)))
+        tpl = jinja2\
+            .Environment(loader=fs, trim_blocks=True)\
+            .get_template('./templates/categories.j2')\
+            .render(category=category, data=json.dumps(to_json(CategoryDtoSerializer, category)))
+
+        dest = open(f'{category_id}.html', 'w')
+        dest.write(tpl)
 
 
 def payload(category_id):
