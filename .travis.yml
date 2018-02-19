@@ -10,3 +10,4 @@ install:
   - pipenv install --dev --system
 script:
   - pytest --cov polymath.core tests
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then codecov; fi
