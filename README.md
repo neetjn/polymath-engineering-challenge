@@ -1,6 +1,7 @@
 # Polymath Engineering Challenge
 
 [![Build Status](https://travis-ci.org/neetjn/polymath-engineering-challenge.svg?branch=master)](https://travis-ci.org/neetjn/polymath-engineering-challenge)
+[![codecov](https://codecov.io/gh/neetjn/polymath-engineering-challenge/branch/master/graph/badge.svg)](https://codecov.io/gh/neetjn/polymath-engineering-challenge)
 
 This project is composed of three components,
 
