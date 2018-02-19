@@ -6,6 +6,6 @@ before_install:
   - pip install codecov
   - pip install pipenv
 install:
-  - cd server && pipenv install --system && cd ..
+  - pipenv install --system
 script:
-  - pytest --cov polymath.core server/tests
+  - pytest --cov polymath.core tests

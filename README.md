@@ -1,5 +1,7 @@
 # Polymath Engineering Challenge
 
+[![Build Status](https://travis-ci.org/neetjn/polymath-engineering-challenge.svg?branch=master)](https://travis-ci.org/neetjn/polymath-engineering-challenge)
+
 This project is composed of three components,
 
 - Script for fetching categories from eBay using the trading api. Will automatically store each category in a local Sqlite database.
@@ -37,6 +39,8 @@ Render an HTML page based on the category provided.
 
 This page consumes the same data our API displays, showing how the api could be leveraged in an actual scenario.
 Realistically, the user would request the topmost level category and drill downwards, which the API also supports.
+
+Alternatively use `--renderl` to render the top level category without the entire tree.
 
 ### --json <category_id>
 

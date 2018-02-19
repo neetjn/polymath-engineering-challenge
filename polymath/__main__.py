@@ -18,15 +18,17 @@ def rebuild():
     categories = get_categories_from_ebay()
     bootstrap(categories)
 
-def render(category_id):
+def render(category_id, tree=True):
     """
     Renders an interactive view for the desired category using Jinja.
 
     :param category_id: Identifier for target category.
     :type category_dto: str
+    :param tree: Render entire category tree.
+    :type tree: bool
     """
     try:
-        category = get_category(category_id, tree=True)
+        category = get_category(category_id, tree=tree)
     except Category.DoesNotExist:
         print(f'No category with id: {category_id}')
     else:
@@ -55,6 +57,7 @@ if __name__ == '__main__':
     a = argparse.ArgumentParser()
     a.add_argument('--rebuild', action='store_true', help='Rebuild categories.')
     a.add_argument('--render', help='Render category tree.', type=int)
+    a.add_argument('--renderl', help='Render category.', type=int)
     a.add_argument('--json', help='Dump category tree as JSON payload.', type=int)
     a.add_argument('--app', action='store_true', help='Start rest api.')
     args, remaining_args = a.parse_known_args()
@@ -62,7 +65,9 @@ if __name__ == '__main__':
         rebuild()
     if args.render:
         render(args.render)
+    if args.renderl:
+        render(args.renderl, False)
     if args.json:
         payload(args.json)
-    if args.app or (not args.rebuild and not args.render and not args.json):
+    if args.app or (not args.rebuild and not args.render and not args.renderl and not args.json):
         api.run(host=API_HOST, port=int(API_PORT), threaded=True, processes=1)
