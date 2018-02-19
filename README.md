@@ -57,7 +57,8 @@ To test the backend core lib with coverage, you can leverage `pytest` installed 
 
 ```bash
 cd server
-pipenv install && pipenv shell
+pipenv install && pipenv install --dev
+pipenv shell
 pytest --cov=polymath.core tests
 ```
 
