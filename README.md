@@ -26,7 +26,7 @@ Rather than using a standard pip requirements file, I leveraged [Pipenv](https:/
 Cleanup and bootstrap our database.
 
 ```bash
-./server python -m polymath --rebuild
+python -m polymath --rebuild
 ```
 
 ### --render <category_id>
@@ -34,7 +34,7 @@ Cleanup and bootstrap our database.
 Render an HTML page based on the category provided.
 
 ```bash
-./server python -m polymath --render 100100
+python -m polymath --render 100100
 ```
 
 This page consumes the same data our API displays, showing how the api could be leveraged in an actual scenario.
@@ -47,7 +47,7 @@ Alternatively use `--renderl` to render the top level category without the entir
 Dump json payload for provided category.
 
 ```bash
-./server python -m polymath --json 100100
+python -m polymath --json 100100
 ```
 
 ## Testing
@@ -66,7 +66,7 @@ The REST api is completely dockerized, and can be built and ran without any addi
 
 ```bash
 docker build . -t polymath-ebay-rest-service
-docker run --rm --name polymath-rest -p 3300:33000 polymath-ebay-rest-service
+docker run --rm --name polymath-rest -p 3300:3300 polymath-ebay-rest-service
 ```
 
 ---

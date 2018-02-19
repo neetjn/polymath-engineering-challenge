@@ -14,4 +14,4 @@ ADD . /opt/app
 # install pipenv deps on system
 RUN set -ex && pipenv install --system
 # move app to working directory and start
-CMD python -m polymath
+CMD python -m polymath --rebuild --app
