@@ -26,7 +26,7 @@ def render(category_id):
     :type category_dto: str
     """
     try:
-        category = get_category(category_id, tree=False)
+        category = get_category(category_id, tree=True)
     except Category.DoesNotExist:
         print(f'No category with id: {category_id}')
     else:

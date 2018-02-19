@@ -9,13 +9,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.8.1/riot+compiler.min.js"></script>
   </head>
   <body>
-    <app />
+    <App />
 
     <script type="riot/tag">
-      <app>
-        <section class="hero is-large">
+      <App>
+        <section class="hero is-fullheight is-info">
           <div class="hero-head">
-            <nav class="navbar">
+            <nav class="navbar animated fadeInDown">
               <div class="container">
                 <div class="navbar-brand">
                   <a class="navbar-item">
@@ -38,66 +38,197 @@
 
           <div class="hero-body">
             <div class="container has-text-centered">
-              <div class="columns is-multiline">
-                <div class="column is-4 animated fadeIn" each={ child in parent_category.children }>
-                  <category category_parent={ parent_category }
-                            category_id={ child.categoryId }
-                            onclick={ updateParent }/>
+              <p class="title">
+                { parent_category.categoryName }
+              </p>
+              <p class="subtitle">
+                Last Updated: <small>{ new Date(parent_category.lastUpdated*1000).toLocaleString() }</small>
+              </p>
+
+              <article if={ error } class="message is-danger animated zoomIn">
+                <div class="message-header">
+                  <p>Error</p>
+                </div>
+                <div class="message-body">
+                  An error has occurred attempting to process your requests.
+                </div>
+              </article>
+
+              <nav class="breadcrumb" aria-label="breadcrumbs">
+                <ul>
+                  <li>
+                    <a href="#" click={ navigate }><i class="fa fa-home"></i></a>
+                  </li>
+                  <li each={ category in category_tree }>
+                    <a href="#" category={ category } click={ navigate }>{ category.categoryName }</a>
+                  </li>
+                </ul>
+              </nav>
+
+              <div class="container">
+                <div class="columns is-multiline animated fadeInRight">
+                  <div class="column is-4" each={ child in parent_category.children }>
+                    <Category parent_category={ parent_category }
+                              category={ child } />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <Footer />
         </section>
+
         <style>
-          .hero-body {
-            margin-top: -12rem;
+          .breadcrumb {
+            padding: 1rem;
+            background-color: #FFDD57;
+            color: #665822;
           }
-          .hero-body .title {
-            margin-bottom: 3em;
+          .message.is-danger {
+            max-width: 35em;
+            margin-left: auto;
+            margin-right: auto;
           }
         </style>
 
-        this.parent_category = this.$category
+        const self = this
 
-        updateParent(e) {
+        self.error = false
+        self.parent_category = self.root_category
+        self.category_tree = []
 
+        self.on('category.push', category => {
+          self.category_tree.push(category)
+          self.parent_category = category
+          self.update()
+        })
+
+        navigate(e) {
+          if (e.item && e.item.category) {
+            self.category_tree.splice(self.category_tree.findIndex(c => c.categoryId == e.item.category.categoryId) + 1)
+            self.parent_category = e.item.category
+          } else {
+            self.category_tree = []
+            self.parent_category = self.root_category
+          }
         }
-      </app>
+      </App>
     </script>
 
     <script type="riot/tag">
-      <category>
-        <div class="card">
-          <div class="card-content">
-            <div class="media">
-              <div class="media-left">
-                <figure class="image is-48x48">
-                  <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-                </figure>
-              </div>
-              <div class="media-content">
-                <p class="title is-4">{ category.categoryName }</p>
-                <p class="subtitle is-6">@johnsmith</p>
-              </div>
-            </div>
+      <Category>
+        <article class="tile is-child notification is-danger">
+          <p class="title is-4">{ category.categoryName }</p>
+          <p class="title is-6">{ category.categoryId }</p>
+          <hr />
+          <p class="subtitle">
+            <span class="tag is-{ category.bestOffersEnabled ? 'success' : 'danger' }">Best Offers</span>
+          </p>
+          <button class="button is-primary"
+                  click={ pushCategory }
+                  disabled={ !category.children.length }>
+            View&nbsp;<i class="fa fa-chevron-circle-right"></i>
+          </button>
+          <button class="button is-success"
+                  click={ viewModal }>
+            Info&nbsp;<i class="fa fa-info-circle"></i>
+          </button>
+          <CategoryModal category={ category } view={ modalView } />
+        </article>
 
-            <div class="content">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-              <a href="#">#css</a> <a href="#">#responsive</a>
-              <br>
-              <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
-            </div>
+        this.category = this.opts.category
+        this.modalView = { active: false }
+
+        pushCategory(e) {
+          this.parent.trigger('category.push', this.category)
+        }
+
+        viewModal(e) {
+          this.modalView.active = true
+        }
+      </Category>
+    </script>
+
+    <script type="riot/tag">
+      <CategoryModal>
+        <div class="modal { view.active ? 'is-active' : '' } animated fadeIn">
+          <div class="modal-background"></div>
+          <div ref="modal" class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">{ category.categoryName }</p>
+              <button class="delete" click={ hideModal }></button>
+            </header>
+            <section class="modal-card-body">
+              <p><strong>Last Updated</strong>: { new Date(category.lastUpdated*1000).toLocaleString() }</p>
+              <p><strong>Child Categories</strong>: { category.children.length }</p>
+              <p><strong>Best Offers Enabled</strong>: { category.bestOffersEnabled ? 'true' : 'false' }</p>
+              <p><strong>Expired</strong>: false</p>
+            </section>
           </div>
         </div>
 
-        console.log(this.opts)
-        this.category = this.opts.category_parent.children.find(c => c.categoryId == this.opts.categoryId)
-      </category>
+        <style>
+          .modal-card * {
+            color: #000;
+          }
+        </style>
+
+        const self = this
+
+        self.category = self.opts.category
+        self.view = self.opts.view
+        self.waitForView = false
+
+        setInterval(function() {
+          if (!self.view.active && !self.waitForView)
+            self.waitForView = true
+          if (self.waitForView && self.view.active) {
+            self.waitForView = false
+            self.refs.modal.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            })
+          }
+        }, 250)
+
+        hideModal(e) {
+          self.view.active = false
+        }
+      </CategoryModal>
+    </script>
+
+    <script type="riot/tag">
+      <Footer class="footer">
+        <div class="container">
+          <div class="content has-text-centered">
+            <h1 class="title">
+              <small><i class="fa fa-cog"></i>&nbsp;Powered by <a href="https://riotjs.com"></small><img id="riot" title="Riot.js" src="http://riotjs.com/img/logo/riot240x.png" /></a>
+            </h1>
+            <p>
+              The source code is licensed <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+              <br />
+              The website content is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+              <br />
+              App by <a href="https://github.com/neetjn">John Nolette</a>.
+            </p>
+          </div>
+        </div>
+
+        <style>
+          footer.footer {
+            border-top: 3px solid #FF291D;
+            background-color: #FF4136;
+          }
+          #riot {
+            display: inline-block;
+            width: 1.5em;
+          }
+        </style>
+      </Footer>
     </script>
 
     <script>
-      riot.mixin({ $category: {{ data }} })
+      riot.mixin({ 'root_category': {{ data }} })
       riot.mount('app')
     </script>
   </body>

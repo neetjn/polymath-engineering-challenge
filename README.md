@@ -35,6 +35,9 @@ Render an HTML page based on the category provided.
 ./server python -m polymath --render 100100
 ```
 
+This page consumes the same data our API displays, showing how the api could be leveraged in an actual scenario.
+Realistically, the user would request the topmost level category and drill downwards, which the API also supports.
+
 ### --json <category_id>
 
 Dump json payload for provided category.

@@ -2,15 +2,10 @@ dist: trusty
 language: python
 python:
   - '3.6'
-env:
-  - NODE_VERSION="8"
 before_install:
-  - nvm install $NODE_VERSION
   - pip install codecov
   - pip install pipenv
 install:
-  # - npm install --prefix app
   - cd server && pipenv install --system && cd ..
 script:
-  # - npm run build --prefix app
   - pytest --cov polymath.core server/tests
