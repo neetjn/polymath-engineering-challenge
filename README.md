@@ -73,4 +73,4 @@ docker run --rm --name polymath-rest -p 3300:3300 polymath-ebay-rest-service
 
 ---
 
-Copyright (c) 2018 John Nolette Licensed under the MIT license.
+Copyright (c) 2018 - present John Nolette Licensed under the MIT license.
